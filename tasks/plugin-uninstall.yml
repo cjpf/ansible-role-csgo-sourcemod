@@ -1,0 +1,10 @@
+---
+- name: Remove {{ sourcemod_plugin.name }} from the active folder
+  file:
+    path: "{{ __sourcemod_addons_path }}/{{ sourcemod_plugin.name }}/"
+    state: absent
+
+- name: Remove {{ sourcemod_plugin.name }} from the disabled folder
+  file:
+    path: "{{ __sourcemod_configs_path }}/disabled/{{ sourcemod_plugin.name }}"
+    state: absent

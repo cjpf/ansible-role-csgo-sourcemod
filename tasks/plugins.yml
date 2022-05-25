@@ -1,0 +1,43 @@
+---
+- name: Check if {{ sourcemod_plugin.name }} exists and is enabled
+  stat:
+    path: "{{ __sourcemod_addons_path }}/plugins/{{ sourcemod_plugin.name }}.smx"
+  register: __sourcemod_plugin_check_enabled
+
+- name: Check if {{ sourcemod_plugin.name }} exists and is disabled
+  stat:
+    path: "{{ __sourcemod_addons_path }}/plugins/disabled/{{ sourcemod_plugin.name }}.smx"
+  register: __sourcemod_plugin_check_disabled
+
+- name: Check if {{ sourcemod_plugin.name }} exists locally
+  become: false
+  local_action:
+    module: stat
+    path: "{{ sourcemod_extra_plugins_directory }}/{{ sourcemod_plugin.name }}/addons/sourcemod/plugins/{{ sourcemod_plugin.name }}.smx"
+  register: __sourcemod_plugin_check_local
+
+- name: Remove {{ sourcemod_plugin.name }}
+  include_tasks: plugin-uninstall.yml
+  when:
+    - sourcemod_plugin.state is defined
+    - sourcemod_plugin.state == "absent"
+
+- name: Disable {{ sourcemod_plugin.name }}
+  include_tasks: plugin-disable.yml
+  when:
+    - sourcemod_plugin.state is defined
+    - sourcemod_plugin.state == "disabled"
+    - __sourcemod_plugin_check_enabled.stat.exists
+
+- name: Enable {{ sourcemod_plugin.name }}
+  include_tasks: plugin-enable.yml
+  when:
+    - sourcemod_plugin.state is not defined
+      or sourcemod_plugin.state == "enabled"
+    - __sourcemod_plugin_check_disabled.stat.exists
+
+- name: Install/Update {{ sourcemod_plugin.name }}
+  include_tasks: plugin-install.yml
+  when:
+    - __sourcemod_plugin_check_local.stat.exists
+      and sourcemod_extra_plugins_directory != ""

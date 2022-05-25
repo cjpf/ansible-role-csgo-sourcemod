@@ -1,0 +1,13 @@
+---
+- name: Copy {{ sourcemod_plugin.name }} addons folder to the disabled folder
+  copy:
+    src: "{{ __sourcemod_addons_path }}/{{ sourcemod_plugin.name }}"
+    dest: "{{ __sourcemod_addons_path }}/disabled/"
+    remote_src: yes
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+
+- name: Remove {{ sourcemod_plugin.name }}
+  file:
+    path: "{{ __sourcemod_addons_path }}/{{ sourcemod_plugin.name }}"
+    state: absent

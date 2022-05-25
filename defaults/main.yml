@@ -1,0 +1,10 @@
+---
+steamcmd_user: steam
+sourcemod_url: https://sm.alliedmods.net/smdrop
+sourcemod_branch: '1.11'
+# Install in the same folder as metamod:source
+__sourcemod_install_path: "{{ metamod_source_install_path | mandatory }}"
+__sourcemod_addons_path: "{{ __sourcemod_install_path }}/addons/sourcemod"
+__sourcemod_configs_path: "{{ __sourcemod_install_path }}/cfg/sourcemod"
+sourcemod_extra_plugins_directory: ""
+follow_guidelines: true

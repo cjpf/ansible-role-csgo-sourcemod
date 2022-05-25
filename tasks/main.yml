@@ -1,0 +1,69 @@
+---
+- name: Check the latest version of sourcemod
+  uri:
+    url: "{{ sourcemod_url }}/{{ sourcemod_branch }}/sourcemod-latest-linux"
+    return_content: yes
+  register: __sourcemod_filename
+  changed_when: no
+
+- name: Check the currently installed version of sourcemod
+  command:
+    cmd: grep -F {{ __sourcemod_filename.content }} {{ __sourcemod_install_path }}/addons/sourcemod/VERSION
+  register: __sourcemod_current
+  changed_when: no
+  failed_when: no
+
+- name: Upgrade sourcemod
+  block:
+    - name: Stop the running source game
+      command: "true"
+      notify: "Stop source games"
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Download the latest version
+      get_url:
+        url: "{{ sourcemod_url }}/{{ sourcemod_branch }}/{{ __sourcemod_filename.content }}"
+        dest: /tmp
+
+    - name: Extract the downloaded file
+      unarchive:
+        remote_src: yes
+        src: "/tmp/{{ __sourcemod_filename.content }}"
+        dest: "{{ __sourcemod_install_path }}/"
+        owner: "{{ steamcmd_user }}"
+        group: "{{ steamcmd_user }}"
+
+    - name: Remove the archive
+      file:
+        path: "/tmp/{{ __sourcemod_filename.content }}"
+        state: absent
+
+    - name: Write the current sourcemod version
+      copy:
+        dest: "{{ __sourcemod_install_path }}/addons/sourcemod/VERSION"
+        content: "{{ __sourcemod_filename.content }}"
+        owner: "{{ steamcmd_user }}"
+        group: "{{ steamcmd_user }}"
+      notify: "Restart source games"
+  when: __sourcemod_current.rc != 0
+
+- name: Ensure SourceMod is configured
+  include_tasks: admins_simple.yml
+  when: sourcemod_admins_simple is defined
+
+- name: Configure SourceMod plugins
+  include_tasks: plugins.yml
+  loop: "{{ sourcemod_plugins }}"
+  loop_control:
+    loop_var: sourcemod_plugin
+  when: sourcemod_plugins is defined
+
+- name: disable FollowCSGOServerGuidelines
+  lineinfile:
+    path: "{{ __sourcemod_addons_path }}/configs/core.cfg"
+    regexp: ^.*FollowCSGOServerGuidelines
+    line: "\"FollowCSGOServerGuidelines\" \"no\""
+  notify: Restart source game
+  when: not follow_guidelines

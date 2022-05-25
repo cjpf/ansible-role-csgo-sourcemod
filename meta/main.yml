@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: sourcemod
+  author: CJ Pfenninger 
+  description: Configure SourceMod - CS:GO
+  company: Blue-Sun Software
+  license: ISC
+  min_ansible_version: 2.4
+  platforms:
+    - name: Debian
+    versions:
+      - stretch
+  galaxy_tags:
+    - source
+    - metamod
+    - sourcemod
+    - csgo
+dependencies: []

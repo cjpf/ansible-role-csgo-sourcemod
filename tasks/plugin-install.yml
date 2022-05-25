@@ -1,0 +1,44 @@
+---
+- name: Copy {{ sourcemod_plugin.name }} addons folder to the active folder
+  copy:
+    src: "{{ sourcemod_extra_plugins_directory }}/{{ sourcemod_plugin.name }}/addons/sourcemod/"
+    dest: "{{ __sourcemod_addons_path }}"
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+    force: no
+  when:
+    - sourcemod_plugin.state is not defined
+      or sourcemod_plugin.state == "enabled"
+
+- name: Copy {{ sourcemod_plugin.name }} configs folder to the active folder
+  copy:
+    src: "{{ sourcemod_extra_plugins_directory }}/{{ sourcemod_plugin.name }}/cfg/sourcemod/"
+    dest: "{{ __sourcemod_configs_path }}"
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+    force: no
+  when:
+    - sourcemod_plugin.state is not defined
+      or sourcemod_plugin.state == "enabled"
+
+- name: Copy {{ sourcemod_plugin.name }} addons folder to the disabled folder
+  copy:
+    src: "{{ sourcemod_extra_plugins_directory }}/{{ sourcemod_plugin.name }}/addons/sourcemod/"
+    dest: "{{ __sourcemod_addons_path }}/disabled/"
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+    force: no
+  when:
+    - sourcemod_plugin.state is defined
+    - sourcemod_plugin.state == "disabled"
+
+- name: Copy {{ sourcemod_plugin.name }} configs folder to the disabled folder
+  copy:
+    src: "{{ sourcemod_extra_plugins_directory }}/{{ sourcemod_plugin.name }}/cfg/sourcemod/"
+    dest: "{{ __sourcemod_configs_path }}/disabled/"
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+    force: no
+  when:
+    - sourcemod_plugin.state is defined
+    - sourcemod_plugin.state == "disabled"
