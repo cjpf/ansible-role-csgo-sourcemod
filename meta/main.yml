@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: csgo-sourcemod
+  role_name: csgo_sourcemod
   author: CJ Pfenninger 
   description: Configure SourceMod - CS:GO
   company: Blue-Sun Software
