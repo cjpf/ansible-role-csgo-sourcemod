@@ -1,7 +1,5 @@
 # Ansible Role: csgo-sourcemod
 
-[![builds.sr.ht status](https://builds.sr.ht/~tleguern/ansible-role-sourcemod.svg)](https://builds.sr.ht/~tleguern/ansible-role-sourcemod?)
-
 An Ansible role that installs and configures [SourceMod](https://www.sourcemod.net/), a [Metamod:Source](http://www.metamodsource.net/) plugin.
 
 This project is a fork from https://github.com/tleguern/ansible-role-sourcemod
